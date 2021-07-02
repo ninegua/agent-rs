@@ -18,6 +18,7 @@ use std::future::Future;
 use std::io::BufRead;
 use std::path::PathBuf;
 use std::pin::Pin;
+use std::process::exit;
 use std::str::FromStr;
 use thiserror::Error;
 
@@ -478,8 +479,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 Ok(blob) => {
                     print_idl_blob(&blob, &t.output, &method_type)
                         .map_err(|e| format!("Invalid IDL blob: {}", e))?;
+                    return Ok(());
                 }
-                Err(AgentError::TransportError(_)) => return Ok(()),
+                Err(AgentError::TransportError(_)) => (),
                 Err(AgentError::HttpError(HttpErrorPayload {
                     status,
                     content_type,
@@ -500,6 +502,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 }
                 Err(s) => eprintln!("Error: {:?}", s),
             }
+            exit(1)
         }
         SubCommand::Status => println!("{:#}", agent.status().await?),
         SubCommand::PrincipalConvert(t) => {
@@ -569,6 +572,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                         r#"Error: Invalid STDIN format. Unexpected line: "{}""#,
                         other
                     );
+                    exit(1)
                 }
             }
         }
