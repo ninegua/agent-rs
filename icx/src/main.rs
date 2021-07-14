@@ -12,7 +12,7 @@ use ic_agent::{
         ReplicaV2Transport,
     },
     export::Principal,
-    identity::BasicIdentity,
+    identity::{BasicIdentity, Secp256k1Identity},
     Agent, AgentError, Identity, RequestId,
 };
 use ic_utils::interfaces::management_canister::{
@@ -292,9 +292,15 @@ pub fn get_effective_canister_id(
     }
 }
 
-fn create_identity(maybe_pem: Option<PathBuf>) -> impl Identity {
+fn create_identity(maybe_pem: Option<PathBuf>) -> Box<dyn Identity + Send + Sync> {
     if let Some(pem_path) = maybe_pem {
-        BasicIdentity::from_pem_file(pem_path).expect("Could not read the key pair.")
+        if let Ok(identity) = BasicIdentity::from_pem_file(pem_path.clone()) {
+            Box::new(identity)
+        } else if let Ok(identity) = Secp256k1Identity::from_pem_file(pem_path) {
+            Box::new(identity)
+        } else {
+            panic!("Could not read the key pair.")
+        }
     } else {
         let rng = ring::rand::SystemRandom::new();
         let pkcs8_bytes = ring::signature::Ed25519KeyPair::generate_pkcs8(&rng)
@@ -302,9 +308,9 @@ fn create_identity(maybe_pem: Option<PathBuf>) -> impl Identity {
             .as_ref()
             .to_vec();
 
-        BasicIdentity::from_key_pair(
+        Box::new(BasicIdentity::from_key_pair(
             Ed25519KeyPair::from_pkcs8(&pkcs8_bytes).expect("Could not generate the key pair."),
-        )
+        ))
     }
 }
 
@@ -411,7 +417,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             agent::http_transport::ReqwestHttpReplicaV2Transport::create(opts.replica.clone())?,
         ),
     }
-    .with_boxed_identity(Box::new(create_identity(opts.pem)))
+    .with_boxed_identity(create_identity(opts.pem))
     .build()?;
 
     // You can handle information about subcommands by requesting their matches by name
