@@ -40,6 +40,8 @@ jobs:
     - name: Strip binaries
       run: |
         cd ${{ matrix.binary_path }}
+        ls -al
+        sudo chown -R $OWNER .
         strip ${{ matrix.binary_files }}
       if: contains(matrix.os, 'ubuntu')
 
