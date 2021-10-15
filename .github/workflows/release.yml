@@ -1,0 +1,42 @@
+name: Release
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            name: linux
+            binary_path: target/x86_64-unknown-linux-musl/release
+          - os: macos-latest
+            binary_path: target/release
+            name: macos
+    steps:
+    - uses: actions/checkout@master
+
+    - name: Static build
+      uses: gmiam/rust-musl-action@master
+      with:
+        args: cargo build --target x86_64-unknown-linux-musl --release --locked
+      if: contains(matrix.os, 'ubuntu')
+
+    - name: Dynamic build
+      steps:
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+      - run: cargo build --release --locked
+      if: contains(matrix.os, 'macos')
+
+    - uses: actions/upload-artifact@v2
+      with:
+        name: binaries for {{ matrix.os }}
+        path: |
+          {{ matrix.binary_path }}/icx
+          {{ matrix.binary_path }}/icx-proxy
