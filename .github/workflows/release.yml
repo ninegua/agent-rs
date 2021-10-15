@@ -26,6 +26,7 @@ jobs:
     - name: Setup environment variables
       run: |
         echo "SHA_SHORT=${GITHUB_SHA::7}" >> $GITHUB_ENV
+        echo "OPENSSL_STATIC=yes" >> $GITHUB_ENV
         binaries=$(echo ${{ matrix.binary_files }} | xargs -n1 echo "--bin"|xargs)
         echo "cargo_build_ARGS<<END" >> $GITHUB_ENV
         echo "--locked --release $binaries" >> $GITHUB_ENV
