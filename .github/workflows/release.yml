@@ -12,11 +12,16 @@ jobs:
           - os: ubuntu-latest
             name: linux
             binary_path: target/x86_64-unknown-linux-musl/release
+            binary_files: icx icx-proxy
           - os: macos-latest
             binary_path: target/release
+            binary_files: icx icx-proxy
             name: macos
     steps:
     - uses: actions/checkout@master
+
+    - name: Setup environment variables
+      run: echo "SHA_SHORT=${GITHUB_SHA::7}" >> $GITHUB_ENV
 
     - name: Static build
       uses: gmiam/rust-musl-action@master
@@ -42,3 +47,14 @@ jobs:
         path: |
           {{ matrix.binary_path }}/icx
           {{ matrix.binary_path }}/icx-proxy
+
+    - name: Create tarball of binaries
+      run: tar -zcC ${{ matrix.binary_path }} -f binaries.tar.gz ${{ matrix.binary_files }}
+
+    - name: Upload tarball
+      uses: svenstaro/upload-release-action@v2
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        file: binaries.tar.gz
+        asset_name: binaries-${{ matrix.name }}.tar.gz
+        tag: ${{ env.SHA_SHORT }}
