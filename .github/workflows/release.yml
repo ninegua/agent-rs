@@ -53,7 +53,10 @@ jobs:
       if: contains(matrix.os, 'macos')
 
     - name: Dynamic build
-      run: cargo build ${{ env.cargo_build_ARGS }}
+      run: |
+        cargo build ${{ env.cargo_build_ARGS }}
+        cd ${{ matrix.binary_path }}
+        otool -L ${{ matrix.binary_files }}
       if: contains(matrix.os, 'macos')
 
     - name: Create tarball of binaries
