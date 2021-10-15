@@ -41,13 +41,6 @@ jobs:
       run: cargo build --release --locked
       if: contains(matrix.os, 'macos')
 
-    - uses: actions/upload-artifact@v2
-      with:
-        name: binaries for {{ matrix.os }}
-        path: |
-          {{ matrix.binary_path }}/icx
-          {{ matrix.binary_path }}/icx-proxy
-
     - name: Create tarball of binaries
       run: tar -zcC ${{ matrix.binary_path }} -f binaries.tar.gz ${{ matrix.binary_files }}
 
