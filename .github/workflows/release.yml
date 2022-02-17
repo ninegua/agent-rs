@@ -21,7 +21,6 @@ jobs:
             name: macos
             binary_path: target/release
             binary_files: icx
-            name: macos
             rust: 1.52.1
     steps:
     - uses: actions/checkout@master
