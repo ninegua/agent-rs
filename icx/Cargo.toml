@@ -20,7 +20,7 @@ path = "src/main.rs"
 
 [dependencies]
 anyhow = { version = "1.0", features = ["backtrace"] }
-candid = "0.7.15"
+candid = { git = "https://github.com/ninegua/candid", rev = "ec5d9806c8234a9a78539b8f256814a3bfc3029c" }
 clap = { version = "3.0.14", features = ["derive", "cargo"] }
 garcon = { version = "0.2.3", features = ["async"] }
 hex = "0.4.2"

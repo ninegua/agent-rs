@@ -222,8 +222,7 @@ checksum = "c4872d67bab6358e59559027aa3b9157c53d9358c51423c17554809a8858e0f8"
 [[package]]
 name = "candid"
 version = "0.7.15"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a4f5cdd24185c6d6edba09bcfe06cf9c1e7fd579cbe5e4ae2dffba9c474a5a7f"
+source = "git+https://github.com/ninegua/candid?rev=ec5d9806c8234a9a78539b8f256814a3bfc3029c#ec5d9806c8234a9a78539b8f256814a3bfc3029c"
 dependencies = [
  "anyhow",
  "binread",
@@ -249,8 +248,7 @@ dependencies = [
 [[package]]
 name = "candid_derive"
 version = "0.4.5"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2e02c03c4d547674a3f3f3109538fb49871fbe636216daa019f06a62faca9061"
+source = "git+https://github.com/ninegua/candid?rev=ec5d9806c8234a9a78539b8f256814a3bfc3029c#ec5d9806c8234a9a78539b8f256814a3bfc3029c"
 dependencies = [
  "lazy_static",
  "proc-macro2",
@@ -1006,8 +1004,7 @@ dependencies = [
 [[package]]
 name = "ic-types"
 version = "0.4.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a67e4edc28c09d29ab97b50410245c91d71756eaf3956212e3488cd6eb75fda4"
+source = "git+https://github.com/ninegua/ic-types?rev=a4d34df5dbb44cb7fb3066c11f6f73c13018ec1f#a4d34df5dbb44cb7fb3066c11f6f73c13018ec1f"
 dependencies = [
  "crc32fast",
  "data-encoding",

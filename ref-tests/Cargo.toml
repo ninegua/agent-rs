@@ -6,7 +6,7 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-candid = "0.7.15"
+candid = { git = "https://github.com/ninegua/candid", rev = "ec5d9806c8234a9a78539b8f256814a3bfc3029c" }
 garcon = { version = "0.2.3", features = ["async"] }
 ic-agent = { path = "../ic-agent" }
 ic-identity-hsm = { path = "../ic-identity-hsm" }
