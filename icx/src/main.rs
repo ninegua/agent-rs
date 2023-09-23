@@ -14,6 +14,7 @@ use ic_agent::{
     },
     export::Principal,
     identity::BasicIdentity,
+    identity::Secp256k1Identity,
     Agent, AgentError, Identity,
 };
 use ic_utils::interfaces::management_canister::{
@@ -316,9 +317,15 @@ pub fn get_effective_canister_id(
     }
 }
 
-fn create_identity(maybe_pem: Option<PathBuf>) -> impl Identity {
+fn create_identity(maybe_pem: Option<PathBuf>) -> Box<dyn Identity> {
     if let Some(pem_path) = maybe_pem {
-        BasicIdentity::from_pem_file(pem_path).expect("Could not read the key pair.")
+        if let Ok(id) = BasicIdentity::from_pem_file(pem_path.clone()) {
+            return Box::new(id);
+        }
+        if let Ok(id) = Secp256k1Identity::from_pem_file(pem_path) {
+            return Box::new(id);
+        }
+        panic!("Could not read the key pair.")
     } else {
         let rng = ring::rand::SystemRandom::new();
         let pkcs8_bytes = ring::signature::Ed25519KeyPair::generate_pkcs8(&rng)
@@ -326,9 +333,9 @@ fn create_identity(maybe_pem: Option<PathBuf>) -> impl Identity {
             .as_ref()
             .to_vec();
 
-        BasicIdentity::from_key_pair(
+        Box::new(BasicIdentity::from_key_pair(
             Ed25519KeyPair::from_pkcs8(&pkcs8_bytes).expect("Could not generate the key pair."),
-        )
+        ))
     }
 }
 
